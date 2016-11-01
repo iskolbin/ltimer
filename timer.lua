@@ -60,7 +60,7 @@ local function deqtimer( q )
 	local size = q._size
 	assert( size > 0, 'Heap is empty' )
 	local timers, priorities, indices = q._timers, q._priorities, q._indices
-	local tmr = tmrs[1]
+	local tmr = timers[1]
 	indices[tmr] = nil
 	if size > 1 then
 		local newtmr = timers[size]
@@ -75,10 +75,6 @@ local function deqtimer( q )
 		q._size = 0
 	end
 	return tmr
-end
-
-local function peektimer( q )
-	return q._timers[1], q._priorities[1]
 end
 
 local function rmtimer( q, tmr )
@@ -141,11 +137,13 @@ function TimerPool:update( dt )
 	local t = self._clock + dt
 	self._clock = t
 	while self._size > 0 do
-		local tmr, clock = peektimer( self )
+		local clock = self._priorities[1]
 		
 		if clock > t then
 			return
 		end
+
+		local tmr = deqtimer( self )
 		
 		local delay = tmr[1]( unpack( tmr, 2 ))
 		if delay then
