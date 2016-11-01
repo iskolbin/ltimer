@@ -1,3 +1,10 @@
+-- Lua timer library
+-- implemented by Ilya Kolbin iskolbin@gmail.com
+--
+-- Library provides timers pool class, and default pool to use directly as
+-- libary functions (which can be confusing in some cases). Timers stores
+-- in the indirect binary min heap structure with the activation time as the priority.
+
 local floor, unpack = math.floor, table.unpack or unpack
 
 local timer = {}
