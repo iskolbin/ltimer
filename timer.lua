@@ -154,7 +154,12 @@ function TimerPool:update( dt )
 	end
 end
 
-function TimerPool:reset( t )
+function TimerPool:reset( clock )
+	local dt = clock - self._clock
+	self._clock = clock
+	for i = 1, self._size do
+		self._priorities[i] = self._priorities[i] + dt
+	end
 end
 
 timer.TimerPool = setmetatable( TimerPool, { __call = function(_,...)
