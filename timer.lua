@@ -104,12 +104,6 @@ local function rmtimer( q, tmr )
 	end
 end
 
-local function updtimer( q, tmr, clock )
-	if rmtimer( q, tmr ) then
-		enqtimer( q, tmr, clock )
-	end
-end
-
 local TimerPool = {}
 
 TimerPool.__index = TimerPool
@@ -132,22 +126,21 @@ function TimerPool:remove( tmr )
 	rmtimer( self, tmr )
 end
 
-function TimerPool:update( dt )
+function TimerPool:update( clock )
 	local timers = self.timers
-	local t = self._clock + dt
-	self._clock = t
+	self._clock = clock
 	while self._size > 0 do
-		local clock = self._priorities[1]
+		local nextclock = self._priorities[1]
 		
-		if clock > t then
+		if nextclock > clock then
 			return
 		end
 
 		local tmr = deqtimer( self )
-		
-		local delay = tmr[1]( unpack( tmr, 2 ))
-		if delay then
-			updtimer( self, tmr, t + delay )
+		local args = {tmr[1]( unpack( tmr, 2 ))}
+		local newdelay = args[1]
+		if newdelay then
+			enqtimer( self, {tmr[1], unpack( args, 2 )}, nextclock + newdelay )
 		end
 	end
 end
