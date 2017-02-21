@@ -51,7 +51,7 @@ local function enqtimer( q, tmr, clock )
 	local timers, priorities, indices = q._timers, q._priorities, q._indices
 	local size = q._size + 1
 	q._size = size	
-	timers[size], priorities[size] = tmr, clock
+	timers[size], priorities[size], indices[tmr] = tmr, clock, size
 	siftup( timers, priorities, size, indices ) 
 	return tmr
 end
