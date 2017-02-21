@@ -1,13 +1,28 @@
--- Lua timer library
--- implemented by Ilya Kolbin iskolbin@gmail.com
---
--- Library provides timers pool class, and default pool to use directly as
--- libary functions (which can be confusing in some cases). Timers stores
--- in the indirect binary min heap structure with the activation time as the priority.
+--[[
 
-local floor, unpack = math.floor, table.unpack or unpack
+ timer -- v0.3.1 public domain Lua timers library
+ no warranty implied; use at your own risk
+ 
+ author: Ilya Kolbin (iskolbin@gmail.com)
+ url: github.com/iskolbin/timer
 
-local timer = {}
+ Library provides timer pool class, which you need to create to use timers.
+ Timers stores in the indirect binary min heap structure with the activation
+ time as the priority.
+
+ COMPATIBILITY
+
+ Lua 5.1, 5.2, 5.3, LuaJIT 1, 2
+
+ LICENSE
+
+ This software is dual-licensed to the public domain and under the following
+ license: you are granted a perpetual, irrevocable license to copy, modify,
+ publish, and distribute this file as you see fit.
+
+--]]
+
+local setmetatable, assert, floor, unpack = _G.setmetatable, _G.assert, math.floor, table.unpack or _G.unpack
 
 local function siftup( timers, priorities, from, indices )
 	local index = from
@@ -119,7 +134,7 @@ function TimerPool.new( clock )
 end
 
 function TimerPool:dcall( delay, f, ... )
-	return enqtimer( self, {f, ...}, self._clock + delay )
+	return enqtimer( self, {f, delay, ...}, self._clock + delay )
 end
 
 function TimerPool:remove( tmr )
@@ -136,11 +151,16 @@ function TimerPool:update( clock )
 			return
 		end
 
-		local tmr = deqtimer( self )
-		local args = {tmr[1]( unpack( tmr, 2 ))}
-		local newdelay = args[1]
-		if newdelay then
-			enqtimer( self, {tmr[1], unpack( args, 2 )}, nextclock + newdelay )
+		local tmr = timers[1]
+		local args = {tmr[1]( unpack( tmr, 3 ))}
+		local n = #args
+		if args[1] ~= nil then
+			for i = 1, n do tmr[i+2] = args[i] end
+			for i = n+3, #tmr do tmr[i] = nil end
+			rmtimer( self, tmr )
+			enqtimer( self, tmr, nextclock + tmr[2] )
+		else
+			deqtimer( self )
 		end
 	end
 end
@@ -153,26 +173,4 @@ function TimerPool:reset( clock )
 	end
 end
 
-timer.TimerPool = setmetatable( TimerPool, { __call = function(_,...)
-	return TimerPool.new( ... )
-end } )
-
-timer._defaultpool = TimerPool()
-
-function timer.dcall( ... )
-	return timer._defaultpool:dcall( ... )
-end
-
-function timer.remove( ... )
-	return timer._defaultpool:remove( ... )
-end
-
-function timer.update( ... )
-	return timer._defaultpool:update( ... )
-end
-
-function timer.reset( ... )
-	return timer._defaultpool:reset( ... )
-end
-
-return timer
+return TimerPool
