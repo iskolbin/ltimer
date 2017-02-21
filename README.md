@@ -6,7 +6,7 @@ Timer
 
 Lua timer library. Provides `TimerPool` class to manage timers.
 
-TimerPool.new( clock = 0)
+TimerPool.new( clock = 0 )
 -------------------------
 
 Create new timer pool with `clock` time.
