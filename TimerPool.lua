@@ -1,6 +1,6 @@
 --[[
 
- timer -- v0.3.1 public domain Lua timers library
+ timer -- v0.3.2 public domain Lua timers library
  no warranty implied; use at your own risk
  
  author: Ilya Kolbin (iskolbin@gmail.com)
@@ -142,7 +142,7 @@ function TimerPool:remove( tmr )
 end
 
 function TimerPool:update( clock )
-	local timers = self.timers
+	local timers = self._timers
 	self._clock = clock
 	while self._size > 0 do
 		local nextclock = self._priorities[1]
@@ -173,4 +173,6 @@ function TimerPool:reset( clock )
 	end
 end
 
-return TimerPool
+return setmetatable( TimerPool, { __call = function(_,...)
+	return TimerPool.new( ... )
+end })
