@@ -7,8 +7,8 @@
  url: github.com/iskolbin/timer
 
  Library provides timer pool class, which you need to create to use timers.
- Timers stores in the indirect binary min heap structure with the activation
- time as the priority.
+ Timers are stored in the indirect binary min heap structure with the
+ activation time as the priority.
 
  COMPATIBILITY
 
