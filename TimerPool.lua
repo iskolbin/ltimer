@@ -1,6 +1,6 @@
 --[[
 
- timer -- v0.3.3 public domain Lua timers library
+ timer -- v0.3.4 public domain Lua timers library
  no warranty implied; use at your own risk
  
  author: Ilya Kolbin (iskolbin@gmail.com)
@@ -142,15 +142,10 @@ function TimerPool:remove( tmr )
 end
 
 function TimerPool:update( clock )
-	local timers = self._timers
 	self._clock = clock
-	while self._size > 0 do
-		local nextclock = self._priorities[1]
-		
-		if nextclock > clock then
-			return
-		end
-
+	local timers, priorities = self._timers, self._priorities
+	local nextclock = priorities[1]
+	while nextclock and nextclock <= clock do
 		local tmr = deqtimer( self )
 		local args = {tmr[1]( unpack( tmr, 3 ))}
 		local n = #args
@@ -159,6 +154,7 @@ function TimerPool:update( clock )
 			for i = n+3, #tmr do tmr[i] = nil end
 			enqtimer( self, tmr, nextclock + tmr[2] )
 		end
+		nextclock = priorities[1]
 	end
 end
 
