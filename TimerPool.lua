@@ -1,6 +1,6 @@
 --[[
 
- timer -- v0.3.4 public domain Lua timers library
+ timer -- v0.3.5 public domain Lua timers library
  no warranty implied; use at your own risk
  
  author: Ilya Kolbin (iskolbin@gmail.com)
@@ -143,7 +143,7 @@ end
 
 function TimerPool:update( clock )
 	self._clock = clock
-	local timers, priorities = self._timers, self._priorities
+	local priorities = self._priorities
 	local nextclock = priorities[1]
 	while nextclock and nextclock <= clock do
 		local tmr = deqtimer( self )
