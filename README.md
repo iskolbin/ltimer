@@ -1,8 +1,8 @@
 ![Build Status](https://travis-ci.org/iskolbin/timer.svg?branch=master)
 [![license](https://img.shields.io/badge/license-public%20domain-blue.svg)]()
 
-Timer
-=====
+Lua timer
+=========
 
 Lua timer library. Provides `TimerPool` class to manage timers.
 
