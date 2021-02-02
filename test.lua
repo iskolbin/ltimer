@@ -38,7 +38,7 @@ end
 
 output = {}
 local timers = {}
-local t = math.random()
+t = math.random()
 for i = 1, 1000 do
 	local j = i
 	timers[i] = pool:dcall(t, function()
@@ -79,7 +79,7 @@ assert(s == 500)
 pool:update(5000)
 assert(s == 1000)
 
-local t = pool:dcall(1, function()
+t = pool:dcall(1, function()
 	s = s + 1
 	return true
 end)

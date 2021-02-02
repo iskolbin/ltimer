@@ -2,7 +2,7 @@
 
  timer - v0.4.0 - public domain Lua timers library
  no warranty implied; use at your own risk
- 
+
  author: Ilya Kolbin (iskolbin@gmail.com)
  url: github.com/iskolbin/ltimer
 
@@ -22,7 +22,7 @@
 
 --]]
 
-local setmetatable, assert, floor, unpack, os_clock = _G.setmetatable, _G.assert, math.floor, table.unpack or _G.unpack, os.clock
+local setmetatable, assert, floor, unpack = _G.setmetatable, _G.assert, math.floor, table.unpack or _G.unpack
 
 local function sift_up(timers, priorities, from, indices)
 	local index = from
@@ -63,9 +63,9 @@ end
 local function enq_timer(q, tmr, clock)
 	local timers, priorities, indices = q.timers, q.priorities, q.indices
 	local size = q.size + 1
-	q.size = size	
+	q.size = size
 	timers[size], priorities[size], indices[tmr] = tmr, clock, size
-	sift_up(timers, priorities, size, indices) 
+	sift_up(timers, priorities, size, indices)
 	return tmr
 end
 
@@ -109,7 +109,7 @@ local function rm_timer(q, tmr)
 		q.size = size
 		if size > 1 then
 			local siftedindex = sift_up(timers, priorities, index, indices)
-			sift_down(timers, priorities, size, siftedindex, indices) 
+			sift_down(timers, priorities, size, siftedindex, indices)
 		end
 	end
 	return true
@@ -162,7 +162,7 @@ function TimerPool:reset(clock)
 	end
 end
 
-local default_pool = TimerPool.new(os_clock())
+local default_pool = TimerPool.new(os.clock())
 
 local timer = {
 	default_pool = default_pool,
@@ -180,11 +180,11 @@ function timer.remove(tmr)
 end
 
 function timer.update(clock)
-	default_pool:update(clock or os_clock())
+	default_pool:update(clock or os.clock())
 end
 
 function timer.reset(clock)
-	default_pool:update(clock or os_clock())
+	default_pool:update(clock or os.clock())
 end
 
 return timer
